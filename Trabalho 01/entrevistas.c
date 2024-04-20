@@ -26,12 +26,13 @@ Entrevistas *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[],
 Entrevistas *inserirEntrevistas(Entrevistas **raiz, const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]);
 
 void imprimirAsEntrevistas(Entrevistas *raiz);
-/*
+
 int verificarFolha(Entrevistas *no);
 Entrevistas *obterUnicoFilho(Entrevistas *node);
 Entrevistas *encontrarMaiorDireita(Entrevistas *no);
-int removerTemas(Entrevistas **raiz, const char tema[]);
-*/
+int removerEntrevista(Entrevistas **raiz, const char tituloEntrevista[]);
+
+void limpa_entrevistas(Entrevistas *raiz);
 
 int main() {
    Entrevistas *raiz = NULL;
@@ -46,6 +47,19 @@ int main() {
     // Impressão dos elementos
     printf("---Entrevistas do Tema---\n\n");
     imprimirAsEntrevistas(raiz);
+
+    // Remover elemento
+    // Impressão dos elementos
+    printf("---Remover Entrevistas do Tema---\n\n");
+    removerEntrevista(&raiz, "ss de Vida");
+
+
+    // Impressão dos elementos
+    printf("---Entrevistas do Tema---\n\n");
+    imprimirAsEntrevistas(raiz);
+
+    //Liberar a memoria
+    void limpa_entrevistas(Entrevistas *raiz);
 
     return 0;
 }
@@ -103,20 +117,21 @@ Entrevistas *inserirEntrevistas(Entrevistas **raiz, const char tituloEntrevista[
 
 
 void imprimirAsEntrevistas(Entrevistas *raiz) {
+
     if (raiz != NULL) {
 
         imprimirAsEntrevistas(raiz->esq);
+
         printf("Título: %s\n", raiz->titulo_da_entrevista);
         printf("Data da Entrevista: %s/%s/%s\n", raiz->data.dia, raiz->data.mes, raiz->data.ano);
         printf("Duração: %.2f\n", raiz->duracao);
         printf("Nome do Entrevistado: %s\n", raiz->nome_do_entrevistado);
         printf("Especialidade do Entrevistado: %s\n\n", raiz->especialidade_do_entrevistado);
-        
+
         imprimirAsEntrevistas(raiz->dir);
     }
 }
 
-/*
 
 int verificarFolha(Entrevistas *no) {
     return (no->esq == NULL && no->dir == NULL);
@@ -143,13 +158,13 @@ Entrevistas *encontrarMaiorDireita(Entrevistas *no) {
 }
 
 
-int removerTemas(Entrevistas **raiz, const char tema[]) {
-    int remove = 1;
+int removerEntrevista(Entrevistas **raiz, const char tituloEntrevista[]) {
+    int remove = 0;
     Entrevistas *maior = NULL;
 
     if (*raiz != NULL) {
 
-        if (strcmp((*raiz)->tema, tema) == 0) {
+        if (strcmp((*raiz)->titulo_da_entrevista, tituloEntrevista) == 0) {
             Entrevistas *Aux, *filho;
 
             if (verificarFolha(*raiz)) {
@@ -164,18 +179,26 @@ int removerTemas(Entrevistas **raiz, const char tema[]) {
             } else {
                 Aux = *raiz;
                 maior = encontrarMaiorDireita((*raiz)->esq);
-                strcpy((*raiz)->tema, maior->tema);
-                removerTemas(&((*raiz)->esq), maior->tema);
+                strcpy((*raiz)->titulo_da_entrevista, maior->titulo_da_entrevista);
+                removerEntrevista(&((*raiz)->esq), maior->titulo_da_entrevista);
                 free(Aux);
             }
-        } else if (strcmp(tema, (*raiz)->tema) < 0) {
-            remove = removerTemas(&((*raiz)->esq), tema);
+        } else if (strcmp(tituloEntrevista, (*raiz)->titulo_da_entrevista) < 0) {
+            remove = removerEntrevista(&((*raiz)->esq), tituloEntrevista);
         } else {
-            remove = removerTemas(&((*raiz)->dir), tema);
+            remove = removerEntrevista(&((*raiz)->dir), tituloEntrevista);
         }
+
     } else {
-        remove = 0;
+        remove = 1;
     }
     return remove;
 }
-*/
+
+void limpa_entrevistas(Entrevistas *raiz) {
+    if (raiz != NULL) {
+        limpa_entrevistas(raiz->esq);
+        limpa_entrevistas(raiz->dir);
+        free(raiz);
+    }
+}

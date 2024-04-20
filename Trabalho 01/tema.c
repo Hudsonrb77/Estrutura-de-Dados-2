@@ -2,47 +2,47 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Temas {
-    char tema[100]; 
-    //Temporadas *temporadas;
-    struct Temas *esq, *dir;
-    //Temporadas temporadas;
-} Temas;
+typedef struct Tema {
+    char nome[100]; 
+    struct Tema *esq, *dir;
+} Tema;
 
 
 
-Temas *criaNo_Temas(const char tema[]);
-Temas *inserirTemas(Temas **raiz, const char tema[]);
+Tema *criaNo_Tema(const char tema[]);
+Tema *inserirTema(Tema **raiz, const char tema[]);
 
-void imprimirOsTemas(Temas *raiz);
+void imprimirOsTemas(Tema *raiz);
 
-int verificarFolha(Temas *no);
-Temas *obterUnicoFilho(Temas *node);
-Temas *encontrarMaiorDireita(Temas *no);
-int removerTemas(Temas **raiz, const char tema[]);
+int verificarFolha(Tema *no);
+Tema *obterUnicoFilho(Tema *node);
+Tema *encontrarMaiorDireita(Tema *no);
+int removerTemas(Tema **raiz, const char tema[]);
 
-
+void limpa_temas(Tema *raiz);
 int main() {
-   Temas *raiz = NULL;
-   raiz = inserirTemas(&raiz, "Gastronomia");
-   raiz = inserirTemas(&raiz, "Ciencia");
-   raiz = inserirTemas(&raiz, "Historias de Vida");
-   raiz = inserirTemas(&raiz, "Literatura");
+   Tema *raiz = NULL;
+   raiz = inserirTema(&raiz, "Gastronomia");
+   raiz = inserirTema(&raiz, "Ciencia");
+   raiz = inserirTema(&raiz, "Historias de Vida");
+   raiz = inserirTema(&raiz, "Literatura");
 
    printf("---Temas de podcast---\n\n");
    imprimirOsTemas(raiz);
 
-   printf("\n\n---Adicionando---\n\n");
+   printf("\n\n---Removendo---\n\n");
    removerTemas(&raiz, "Ciencia");
 
    printf("---Temas de podcast---\n\n");
    imprimirOsTemas(raiz);
 
+    //Liberando Memoria
+    limpa_temas(raiz);
     return 0;
 }
 
-Temas *criaNo_Temas(const char tema[]) {
-    Temas *novo_no = (Temas *)malloc(sizeof(Temas)); // Aloca memória para o novo nó.
+Tema *criaNo_Tema(const char tema[]) {
+    Tema *novo_no = (Tema *)malloc(sizeof(Tema)); // Aloca memória para o novo nó.
 
     if (novo_no == NULL) {
         printf("Erro na alocação de memória.\n");
@@ -50,40 +50,42 @@ Temas *criaNo_Temas(const char tema[]) {
     }
 
 
-    strncpy(novo_no->tema, tema, sizeof(novo_no->tema)); 
+    strncpy(novo_no->nome, tema, sizeof(novo_no->nome)); 
     novo_no->esq = NULL;
     novo_no->dir = NULL;
 
     return novo_no;
 }
 
-Temas *inserirTemas(Temas **raiz, const char tema[]) {
+Tema *inserirTema(Tema **raiz, const char tema[]) {
     if (*raiz == NULL) {
-        *raiz = criaNo_Temas(tema);
+        *raiz = criaNo_Tema(tema);
+        printf("Tema '%s' cadastrado com sucesso!\n", tema);
     } else {
-      if (strcmp(tema,(*raiz)->tema) < 0)
-         (*raiz)->esq = inserirTemas(&((*raiz)->esq), tema);
-      else if (strcmp(tema, (*raiz)->tema) > 0)
-         (*raiz)->dir = inserirTemas(&((*raiz)->dir), tema);
-        
+        if (strcmp(tema,(*raiz)->nome) < 0)
+            (*raiz)->esq = inserirTema(&((*raiz)->esq), tema);
+        else if (strcmp(tema, (*raiz)->nome) > 0)
+            (*raiz)->dir = inserirTema(&((*raiz)->dir), tema);
+        else
+            printf("Nao e possivel cadastrar o podcast '%s' novamente na mesma plataforma.\n", tema);
     }
 
     return *raiz;
 }
 
-void imprimirOsTemas(Temas *raiz) {
+void imprimirOsTemas(Tema *raiz) {
     if (raiz != NULL) {
 
         imprimirOsTemas(raiz->esq);
-        printf("Título: %s\n", raiz->tema);        
+        printf("Título: %s\n", raiz->nome);        
         imprimirOsTemas(raiz->dir);
     }
 }
-int verificarFolha(Temas *no) {
+int verificarFolha(Tema *no) {
     return (no->esq == NULL && no->dir == NULL);
 }
 
-Temas *obterUnicoFilho(Temas *no) {
+Tema *obterUnicoFilho(Tema *no) {
     if (no->esq != NULL && no->dir == NULL)
         return no->esq;
     else if (no->dir != NULL && no->esq == NULL)
@@ -92,7 +94,7 @@ Temas *obterUnicoFilho(Temas *no) {
         return NULL;
 }
 
-Temas *encontrarMaiorDireita(Temas *no) {
+Tema *encontrarMaiorDireita(Tema *no) {
     // Se não houver um filho à direita, este nó é o maior
     if (no->dir == NULL)
         return no;
@@ -101,14 +103,14 @@ Temas *encontrarMaiorDireita(Temas *no) {
     return encontrarMaiorDireita(no->dir);
 }
 
-int removerTemas(Temas **raiz, const char tema[]) {
+int removerTemas(Tema **raiz, const char tema[]) {
     int remove = 1;
-    Temas *maior = NULL;
+    Tema *maior = NULL;
 
     if (*raiz != NULL) {
 
-        if (strcmp((*raiz)->tema, tema) == 0) {
-            Temas *Aux, *filho;
+        if (strcmp((*raiz)->nome, tema) == 0) {
+            Tema *Aux, *filho;
 
             if (verificarFolha(*raiz)) {
                 Aux = *raiz;
@@ -122,11 +124,11 @@ int removerTemas(Temas **raiz, const char tema[]) {
             } else {
                 Aux = *raiz;
                 maior = encontrarMaiorDireita((*raiz)->esq);
-                strcpy((*raiz)->tema, maior->tema);
-                removerTemas(&((*raiz)->esq), maior->tema);
+                strcpy((*raiz)->nome, maior->nome);
+                removerTemas(&((*raiz)->esq), maior->nome);
                 free(Aux);
             }
-        } else if (strcmp(tema, (*raiz)->tema) < 0) {
+        } else if (strcmp(tema, (*raiz)->nome) < 0) {
             remove = removerTemas(&((*raiz)->esq), tema);
         } else {
             remove = removerTemas(&((*raiz)->dir), tema);
@@ -135,4 +137,12 @@ int removerTemas(Temas **raiz, const char tema[]) {
         remove = 0;
     }
     return remove;
+}
+
+void limpa_temas(Tema *raiz) {
+    if (raiz != NULL) {
+        limpa_temas(raiz->esq);
+        limpa_temas(raiz->dir);
+        free(raiz);
+    }
 }
