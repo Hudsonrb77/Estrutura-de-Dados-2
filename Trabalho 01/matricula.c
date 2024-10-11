@@ -18,6 +18,10 @@ void limpa_temas(ArvMatricula *raiz);
 
 int main() {
     ArvMatricula *raiz = NULL;
+<<<<<<< HEAD
+=======
+
+>>>>>>> dc694b9419c28c116a0ae4ad4f6d39350ffe5898
     // Inserindo temas com base no código da disciplina (agora números inteiros)
     raiz = inserirMatricula(&raiz, 103); 
     raiz = inserirMatricula(&raiz, 102);
