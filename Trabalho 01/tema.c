@@ -2,47 +2,47 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Tema {
+typedef struct ArvMatricula {
     char nome[100]; 
-    struct Tema *esq, *dir;
-} Tema;
+    struct ArvMatricula *esq, *dir;
+} ArvMatricula;
 
 
 
-Tema *criaNo_Tema(const char tema[]);
-Tema *inserirTema(Tema **raiz, const char tema[]);
+ArvMatricula *criaNo_Tema(const char tema[]);
+ArvMatricula *inserirTema(ArvMatricula **raiz, const char tema[]);
 
-void imprimirOsTemas(Tema *raiz);
+void imprimir_Matriculas(ArvMatricula *raiz);
 
-int verificarFolha(Tema *no);
-Tema *obterUnicoFilho(Tema *node);
-Tema *encontrarMaiorDireita(Tema *no);
-int removerTemas(Tema **raiz, const char tema[]);
+int verificarFolhaMatricula(ArvMatricula *no);
+ArvMatricula *obterUnicoFilhoMatricula(ArvMatricula *node);
+ArvMatricula *encontrarMaiorDireitaMatricula(ArvMatricula *no);
+int removerTemas(ArvMatricula **raiz, const char tema[]);
 
-void limpa_temas(Tema *raiz);
+void limpa_temas(ArvMatricula *raiz);
 int main() {
-   Tema *raiz = NULL;
+   ArvMatricula *raiz = NULL;
    raiz = inserirTema(&raiz, "Gastronomia");
    raiz = inserirTema(&raiz, "Ciencia");
    raiz = inserirTema(&raiz, "Historias de Vida");
    raiz = inserirTema(&raiz, "Literatura");
 
    printf("---Temas de podcast---\n\n");
-   imprimirOsTemas(raiz);
+   imprimir_Matriculas(raiz);
 
    printf("\n\n---Removendo---\n\n");
    removerTemas(&raiz, "Ciencia");
 
    printf("---Temas de podcast---\n\n");
-   imprimirOsTemas(raiz);
+   imprimir_Matriculas(raiz);
 
     //Liberando Memoria
     limpa_temas(raiz);
     return 0;
 }
 
-Tema *criaNo_Tema(const char tema[]) {
-    Tema *novo_no = (Tema *)malloc(sizeof(Tema)); // Aloca memória para o novo nó.
+ArvMatricula *criaNo_Tema(const char tema[]) {
+    ArvMatricula *novo_no = (ArvMatricula *)malloc(sizeof(ArvMatricula)); // Aloca memória para o novo nó.
 
     if (novo_no == NULL) {
         printf("Erro na alocação de memória.\n");
@@ -57,7 +57,7 @@ Tema *criaNo_Tema(const char tema[]) {
     return novo_no;
 }
 
-Tema *inserirTema(Tema **raiz, const char tema[]) {
+ArvMatricula *inserirTema(ArvMatricula **raiz, const char tema[]) {
     if (*raiz == NULL) {
         *raiz = criaNo_Tema(tema);
         printf("Tema '%s' cadastrado com sucesso!\n", tema);
@@ -73,19 +73,19 @@ Tema *inserirTema(Tema **raiz, const char tema[]) {
     return *raiz;
 }
 
-void imprimirOsTemas(Tema *raiz) {
+void imprimir_Matriculas(ArvMatricula *raiz) {
     if (raiz != NULL) {
 
-        imprimirOsTemas(raiz->esq);
+        imprimir_Matriculas(raiz->esq);
         printf("Título: %s\n", raiz->nome);        
-        imprimirOsTemas(raiz->dir);
+        imprimir_Matriculas(raiz->dir);
     }
 }
-int verificarFolha(Tema *no) {
+int verificarFolhaMatricula(ArvMatricula *no) {
     return (no->esq == NULL && no->dir == NULL);
 }
 
-Tema *obterUnicoFilho(Tema *no) {
+ArvMatricula *obterUnicoFilhoMatricula(ArvMatricula *no) {
     if (no->esq != NULL && no->dir == NULL)
         return no->esq;
     else if (no->dir != NULL && no->esq == NULL)
@@ -94,36 +94,36 @@ Tema *obterUnicoFilho(Tema *no) {
         return NULL;
 }
 
-Tema *encontrarMaiorDireita(Tema *no) {
+ArvMatricula *encontrarMaiorDireitaMatricula(ArvMatricula *no) {
     // Se não houver um filho à direita, este nó é o maior
     if (no->dir == NULL)
         return no;
     
     // Chamada recursiva para o filho à direita
-    return encontrarMaiorDireita(no->dir);
+    return encontrarMaiorDireitaMatricula(no->dir);
 }
 
-int removerTemas(Tema **raiz, const char tema[]) {
+int removerTemas(ArvMatricula **raiz, const char tema[]) {
     int remove = 1;
-    Tema *maior = NULL;
+    ArvMatricula *maior = NULL;
 
     if (*raiz != NULL) {
 
         if (strcmp((*raiz)->nome, tema) == 0) {
-            Tema *Aux, *filho;
+            ArvMatricula *Aux, *filho;
 
-            if (verificarFolha(*raiz)) {
+            if (verificarFolhaMatricula(*raiz)) {
                 Aux = *raiz;
                 *raiz = NULL;
                 free(Aux);
-            } else if ((filho = obterUnicoFilho(*raiz)) != NULL) {
+            } else if ((filho = obterUnicoFilhoMatricula(*raiz)) != NULL) {
                 // OBS: Se a função tiver dois filhos ela tem que retornar NULL.
                 Aux = *raiz;
                 *raiz = filho;
                 free(Aux);
             } else {
                 Aux = *raiz;
-                maior = encontrarMaiorDireita((*raiz)->esq);
+                maior = encontrarMaiorDireitaMatricula((*raiz)->esq);
                 strcpy((*raiz)->nome, maior->nome);
                 removerTemas(&((*raiz)->esq), maior->nome);
                 free(Aux);
@@ -139,7 +139,7 @@ int removerTemas(Tema **raiz, const char tema[]) {
     return remove;
 }
 
-void limpa_temas(Tema *raiz) {
+void limpa_temas(ArvMatricula *raiz) {
     if (raiz != NULL) {
         limpa_temas(raiz->esq);
         limpa_temas(raiz->dir);

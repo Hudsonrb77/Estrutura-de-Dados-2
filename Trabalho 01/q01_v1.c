@@ -14,15 +14,37 @@ typedef struct Podcast {
     char nome[100];
     char entrevistado[100];
     struct ArvMatricula *temas;
-    struct Podcast *esq;
-    struct Podcast *dir;
+    struct Podcast *esq, *dir;
 } Podcast;
+
+
+typedef struct Data {
+    char dia[3];
+    char mes[3];
+    char ano[3]; 
+} Data;
+
+
+typedef struct Entrevista {
+    char titulo_da_entrevista[100]; 
+    Data data;
+    float  duracao;  
+    char nome_do_entrevistado[50], especialidade_do_entrevistado[20]; 
+    struct Entrevista *esq, *dir;
+} Entrevista;
+
 
 typedef struct ArvMatricula {
     char nome[50]; 
-   //Tema *temas;
+    Entrevista *entrevistas;
     struct ArvMatricula *esq, *dir;
 } ArvMatricula;
+
+
+
+
+
+
 
 
 //PLATAFORMA
@@ -36,24 +58,41 @@ Plataforma *buscar_plataforma(Plataforma *plataformas, const char nome_plataform
 struct Podcast *cria_podcast(char nome[100], char entrevistado[100]);
 void insere_Podcast(struct Podcast **raiz, char nome[100], char entrevistado[100]);
 void imprimir_Podcasts(Podcast *raiz);
-struct Podcast *buscar_Podcast(struct Podcast *raiz, const char nome_podcast[]);
+Podcast *buscar_Podcast(struct Podcast *raiz, const char nome_podcast[]);
 
 
 //TEMA
 ArvMatricula *criaNo_Tema(const char tema[]);
 ArvMatricula *inserirTema(ArvMatricula **raiz, const char tema[]);
 void imprimir_Matriculas(ArvMatricula *raiz);
+ArvMatricula *buscar_Tema(struct ArvMatricula *raiz, const char nome_tema[]);
+
 
 int verificarFolhaMatricula(ArvMatricula *no);
 ArvMatricula *obterUnicoFilhoMatricula(ArvMatricula *node);
 ArvMatricula *encontrarMaiorDireitaMatricula(ArvMatricula *no);
 int removerTemas(ArvMatricula **raiz, const char tema[]);
 
+
+//ENTREVISTA
+void preencherData(Data *data, const char dia[], const char mes[], const char ano[]);
+
+Entrevista *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]);
+Entrevista *inserirEntrevistas(Entrevista **raiz, const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]);
+
+void imprimir_Entrevistas(Entrevista *raiz);
+int verificarFolhaEntrevista(Entrevista *no);
+Entrevista *obterUnicoFilhoEntrevista(Entrevista *node);
+Entrevista *encontrarMaiorDireitaEntrevista(Entrevista *no);
+int removerEntrevista(Entrevista **raiz, const char tituloEntrevista[]);
+
+
 //LIBERAR MEMORIA
 void limpa_temas(ArvMatricula *raiz);
 void limparMemoria_Podcast(Podcast *raiz);
 void limparMemoria_Plataforma(Plataforma *plataformas);
-
+void limpa_entrevistas(Entrevista *raiz);
+void limpaMemoria_entrevistas(Entrevista *raiz);
 
 
 
@@ -86,18 +125,30 @@ int main() {
 
         }
     }
-    int contTema=0;
-    contPod = 0;
+    int contPodcast = 0;
+
     for (int i = 0; i < 3; i++) {
+        printf("\n-----PLATAFORMA-----\n");
         aux = buscar_plataforma(plataformas, nome_plataforma[i]);
+        printf("%s\n", aux->nome);
+        
         for (int j = 0; j < 3; j++) {
-            buscar_Podcast(aux->podcasts, nome_podcast[j]);
-            for (int k = 0; k < 3; k++) {
-                inserirTema(&(aux->podcasts->temas), nome_tema[contTema]);
-                contTema++;
+
+            printf("\n--------Podcast----\n");
+            auxPodcast = buscar_Podcast(aux->podcasts, nome_podcast[contPodcast]);
+            contPodcast++;
+
+            if (auxPodcast != NULL){
+                printf("%s\n", auxPodcast->nome);
+                for (int k = 0; k < 3; k++) {
+                    ArvMatricula *auxTema = inserirTema(&(auxPodcast->temas), nome_tema[k]);
+                    inserirEntrevistas(&(auxTema->entrevistas), "Literatura", "10", "08", "2021", 20.8, "J.K. Rowling", "Escritora");
+                    inserirEntrevistas(&(auxTema->entrevistas), "Historias de Vida", "15", "03", "2022", 60.0, "Nelson Mandela", "Político");
+                    inserirEntrevistas(&(auxTema->entrevistas), "Cie        ncia", "19", "04", "2024", 30.5, "Albert Einstein", "Físico");
+                    inserirEntrevistas(&(auxTema->entrevistas), "Gastronomia", "20", "05", "2023", 45.2, "Gordon Ramsay", "Chef");
+                }
             }
-            contPod++;
-            contTema=0;
+            
         }
     }
 
@@ -110,29 +161,30 @@ int main() {
 
         switch (opcao) {
             case 1: {
-                Plataforma *plataformaBuscada = NULL;
-               plataformaBuscada = buscar_plataforma(plataformas, "Plataforma X");
-               if (plataformaBuscada == NULL){
-                  printf("Plataforma nao encontrada.\n");
-               } else{
-                  imprimir_Podcasts(plataformaBuscada->podcasts);
-               }
-               printf("---------------xxxxxxxxxxxx-------\n\n");
-               plataformaBuscada = buscar_plataforma(plataformas, "Plataforma Y");
-               if (plataformaBuscada == NULL){
-                  printf("Plataforma nao encontrada.\n");
-               } else{
-                  imprimir_Podcasts(plataformaBuscada->podcasts);
-               }
-               printf("---------------xxxxxxxxxxxx-------\n\n");
-               plataformaBuscada = buscar_plataforma(plataformas, "Plataforma Z");
-               if (plataformaBuscada == NULL){
-                  printf("Plataforma nao encontrada.\n");
-               } else{
-                  imprimir_Podcasts(plataformaBuscada->podcasts);
-               }
 
-               printf("---------------xxxxxxxxxxxx-------\n\n");
+                Plataforma *plataformaBuscada = NULL;
+                plataformaBuscada = buscar_plataforma(plataformas, "Plataforma X");
+                if (plataformaBuscada == NULL){
+                    printf("Plataforma nao encontrada.\n");
+                } else{
+                    imprimir_Podcasts(plataformaBuscada->podcasts);
+                }
+                printf("---------------xxxxxxxxxxxx-------\n\n");
+                plataformaBuscada = buscar_plataforma(plataformas, "Plataforma Y");
+                if (plataformaBuscada == NULL){
+                   printf("Plataforma nao encontrada.\n");
+                } else{
+                   imprimir_Podcasts(plataformaBuscada->podcasts);
+                }
+                printf("---------------xxxxxxxxxxxx-------\n\n");
+                plataformaBuscada = buscar_plataforma(plataformas, "Plataforma Z");
+                if (plataformaBuscada == NULL){
+                   printf("Plataforma nao encontrada.\n");
+                } else{
+                   imprimir_Podcasts(plataformaBuscada->podcasts);
+                }
+
+               printf("---------------Podcasts Imprimidos-------\n\n");
 
                break;
             }
@@ -162,17 +214,14 @@ int main() {
             case 4: {
                 //QUESTAO 2
                 Plataforma *plataformaBuscada = NULL;
-                char buscarPlataforma[20], buscarTema[20];
+                char buscarPlataforma[20];
 
                 printf("\n-----Mostrar na tela todos os temas de um PodCast de uma plataforma.----\n");
 
 
-                printf("Digite a plataforma:\n");
-                scanf("%s", buscarPlataforma);
+                printf("Digite a plataforma: ");
+                scanf(" %[^\n]", buscarPlataforma);
 
-               
-                printf("Digite o tema:\n");
-                scanf("%s", buscarTema);
 
                 plataformaBuscada = buscar_plataforma(plataformas, buscarPlataforma);
                 if (plataformaBuscada == NULL){
@@ -180,12 +229,13 @@ int main() {
                     printf("Plataforma nao encontrada.\n");
 
                 } else {
-                    
                     Podcast *podcastBuscado = NULL;
                     char buscarPodcast[20];
 
-                    printf("Digite a podcast:\n");
-                    scanf("%s", buscarPodcast);
+                    imprimir_Podcasts(plataformaBuscada->podcasts);
+                    
+                    printf("Digite o nome do Podcast para buscar os temas:\n");
+                    scanf(" %[^\n]", buscarPodcast);
 
                     podcastBuscado = buscar_Podcast(plataformaBuscada->podcasts, buscarPodcast);
                    
@@ -197,8 +247,57 @@ int main() {
                 }
                 break;
             }
+            case 5: {
+                //QUESTAO 3
+                Plataforma *plataformaBuscada = NULL;
+                char buscarPlataforma[20];
+
+                printf("\n-----Mostrar na tela todos os temas de um PodCast de uma plataforma.----\n");
+
+
+                printf("Digite a plataforma: ");
+                scanf(" %[^\n]", buscarPlataforma);
+
+
+                plataformaBuscada = buscar_plataforma(plataformas, buscarPlataforma);
+                if (plataformaBuscada == NULL){
+
+                    printf("Plataforma nao encontrada.\n");
+
+                } else {
+                    Podcast *podcastBuscado = NULL;
+                    char buscarPodcast[20];
+                    
+                    imprimir_Podcasts(plataformaBuscada->podcasts);
+                    printf("Digite o nome do Podcast para buscar os temas:\n");
+                    scanf(" %[^\n]", buscarPodcast);
+                    
+
+                    podcastBuscado = buscar_Podcast(plataformaBuscada->podcasts, buscarPodcast);
+                   
+                    if (podcastBuscado == NULL) {
+                        printf("Podcast nao encontrado na plataforma.\n");
+                    } else {
+                        ArvMatricula *temaBuscado = NULL;
+                        char buscarTema[20];
+
+                        imprimir_Matriculas(podcastBuscado->temas);
+                        printf("Digite o nome do Tema para buscar os nomes das entrevistas:\n");
+                        scanf(" %[^\n]", buscarTema);
+
+                        //Depois testa isso: Tema *temaBuscado = buscar_tema();
+                        temaBuscado = buscar_Tema(podcastBuscado->temas, buscarTema);
+
+                        if (temaBuscado == NULL)
+                            printf("Tema nao encontrado na plataforma.\n");
+                        else
+                            imprimir_Entrevistas(temaBuscado->entrevistas);
+                    }
+                }
+                break;
+            }
             case 0: {
-                printf("Encerrando o programa...\n");
+                printf("\nEncerrando o programa...\n");
                 break;
             }
             default: {
@@ -398,6 +497,22 @@ void imprimir_Matriculas(ArvMatricula *raiz) {
     }
 }
 
+ArvMatricula *buscar_Tema(struct ArvMatricula *raiz, const char nome_tema[]){
+    struct ArvMatricula *encontrou = NULL; // Inicializa a variável encontrou como NULL
+
+    if (raiz != NULL) {
+
+        if (strcmp(raiz->nome, nome_tema) == 0) {
+            encontrou = raiz;
+        } else if (strcmp(nome_tema, raiz->nome) < 0) {
+            encontrou = buscar_Tema(raiz->esq, nome_tema);
+        } else {
+            encontrou = buscar_Tema(raiz->dir, nome_tema);
+        }
+    }
+
+    return encontrou; // Retorna o resultado encontrado
+}
 
 
 int verificarFolhaMatricula(ArvMatricula *no) {
@@ -457,6 +572,138 @@ int removerTemas(ArvMatricula **raiz, const char tema[]) {
     return remove;
 }
 
+
+
+void preencherData(Data *data, const char dia[], const char mes[], const char ano[]) {
+    strcpy(data->dia, dia);
+    strcpy(data->mes, mes);
+    strcpy(data->ano, ano);
+}
+
+
+Entrevista *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]) {
+    
+    Entrevista *novo_no = (Entrevista *)malloc(sizeof(Entrevista)); // Aloca memória para o novo nó.
+
+    if (novo_no == NULL) {
+        printf("Erro na alocação de memória.\n");
+        exit(1);
+    }
+
+
+    strcpy(novo_no->titulo_da_entrevista, tituloEntrevista); 
+    preencherData(&(novo_no->data), dia, mes, ano);
+    novo_no->duracao = duracao;
+    strcpy(novo_no->nome_do_entrevistado, nome_entrevistado);
+    strcpy(novo_no->especialidade_do_entrevistado, especialidade_entrevistado);
+    novo_no->esq = NULL;
+    novo_no->dir = NULL;
+
+
+    return novo_no;
+}
+
+
+Entrevista *inserirEntrevistas(Entrevista **raiz, const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]) {
+    if (*raiz == NULL) {
+        *raiz = criaNo_Entrevistas(tituloEntrevista, dia, mes, ano, duracao, nome_entrevistado, especialidade_entrevistado);
+        printf("Entrevista '%s' cadastrado com sucesso!\n", tituloEntrevista);
+    } else {
+        if (strcmp(tituloEntrevista, (*raiz)->titulo_da_entrevista) < 0) {
+            (*raiz)->esq = inserirEntrevistas(&((*raiz)->esq), tituloEntrevista, dia, mes, ano, duracao, nome_entrevistado, especialidade_entrevistado);
+        }
+        else if (strcmp(tituloEntrevista, (*raiz)->titulo_da_entrevista) > 0) {
+            (*raiz)->dir = inserirEntrevistas(&((*raiz)->dir), tituloEntrevista, dia, mes, ano, duracao, nome_entrevistado, especialidade_entrevistado);
+        }
+        else {
+            printf("Não é possível cadastrar o podcast '%s' novamente na mesma plataforma.\n", tituloEntrevista);
+        }
+    }
+
+    return *raiz;
+}
+
+
+void imprimir_Entrevistas(Entrevista *raiz) {
+
+    if (raiz != NULL) {
+
+        imprimir_Entrevistas(raiz->esq);
+
+        printf("Título: %s\n", raiz->titulo_da_entrevista);
+        printf("Data da Entrevista: %s/%s/%s\n", raiz->data.dia, raiz->data.mes, raiz->data.ano);
+        printf("Duração: %.2f\n", raiz->duracao);
+        printf("Nome do Entrevistado: %s\n", raiz->nome_do_entrevistado);
+        printf("Especialidade do Entrevistado: %s\n\n", raiz->especialidade_do_entrevistado);
+
+        imprimir_Entrevistas(raiz->dir);
+    }
+}
+
+
+int verificarFolhaEntrevista(Entrevista *no) {
+    return (no->esq == NULL && no->dir == NULL);
+}
+
+
+Entrevista *obterUnicoFilhoEntrevista(Entrevista *no) {
+    if (no->esq != NULL && no->dir == NULL)
+        return no->esq;
+    else if (no->dir != NULL && no->esq == NULL)
+        return no->dir;
+    else
+        return NULL;
+}
+
+
+Entrevista *encontrarMaiorDireitaEntrevista(Entrevista *no) {
+    // Se não houver um filho à direita, este nó é o maior
+    if (no->dir == NULL)
+        return no;
+    
+    // Chamada recursiva para o filho à direita
+    return encontrarMaiorDireitaEntrevista(no->dir);
+}
+
+
+int removerEntrevista(Entrevista **raiz, const char tituloEntrevista[]) {
+    int remove = 0;
+    Entrevista *maior = NULL;
+
+    if (*raiz != NULL) {
+
+        if (strcmp((*raiz)->titulo_da_entrevista, tituloEntrevista) == 0) {
+            Entrevista *Aux, *filho;
+
+            if (verificarFolhaEntrevista(*raiz)) {
+                Aux = *raiz;
+                *raiz = NULL;
+                free(Aux);
+            } else if ((filho = obterUnicoFilhoEntrevista(*raiz)) != NULL) {
+                // OBS: Se a função tiver dois filhos ela tem que retornar NULL.
+                Aux = *raiz;
+                *raiz = filho;
+                free(Aux);
+            } else {
+                Aux = *raiz;
+                maior = encontrarMaiorDireitaEntrevista((*raiz)->esq);
+                strcpy((*raiz)->titulo_da_entrevista, maior->titulo_da_entrevista);
+                removerEntrevista(&((*raiz)->esq), maior->titulo_da_entrevista);
+                free(Aux);
+            }
+        } else if (strcmp(tituloEntrevista, (*raiz)->titulo_da_entrevista) < 0) {
+            remove = removerEntrevista(&((*raiz)->esq), tituloEntrevista);
+        } else {
+            remove = removerEntrevista(&((*raiz)->dir), tituloEntrevista);
+        }
+
+    } else {
+        remove = 1;
+    }
+    return remove;
+}
+
+
 void limpa_temas(ArvMatricula *raiz) {
     if (raiz != NULL) {
         limpa_temas(raiz->esq);
@@ -465,11 +712,24 @@ void limpa_temas(ArvMatricula *raiz) {
     }
 }
 
+void limpaMemoria_entrevistas(Entrevista *raiz) {
+    if (raiz != NULL) {
+        limpaMemoria_entrevistas(raiz->esq);
+        limpaMemoria_entrevistas(raiz->dir);
+        free(raiz);
+    }
+}
+
+
+
 void exibir_menu() {
     printf("\n=== Menu de Cadastro ===\n");
     printf("1. Cadastrar plataforma\n");
     printf("2. Cadastrar podcast\n");
-    printf("3. Exibir plataformas e podcasts cadastrados\n");
+    printf("3. Exibir plataformas e podcasts cadastrados.\n");
+    printf("4. Mostrar todos os temas de um PodCast de uma plataforma.\n");
+    printf("5. Mostrar todos os títulos das entrevistas de um PodCast de uma plataforma dado o tema.\n");
+    
     printf("0. Sair\n");
     printf("Digite a opcao desejada: ");
 }
