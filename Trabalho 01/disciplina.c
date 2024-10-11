@@ -14,7 +14,7 @@ typedef struct ArvDisciplinas {
 
 // Funções
 ArvDisciplinas *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria);
-ArvDisciplinas *inserirDisciplina(ArvDisciplinas **raiz, int codigoDisciplina, char nome_da_disciplina[], int semestreCursado, int carga_horaria);
+ArvDisciplinas *inserirDisciplina(ArvDisciplinas **raiz, int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria);
 void imprimir_Disciplinas(ArvDisciplinas *raiz);
 int verificarFolhaDisciplina(ArvDisciplinas *no);
 ArvDisciplinas *obterUnicoFilhoDisciplina(ArvDisciplinas *node);
@@ -57,9 +57,9 @@ ArvDisciplinas *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[
     printf("Disciplina com código '%s' cadastrado com sucesso!\n", nome_da_disciplina);
 
     novo_no->info.codigo_da_disciplina = codigoDisciplina;
-    strcmp(novo_no->info.nome_da_disciplina, nome_da_disciplina);
-    novo_no->info.carga_horaria = carga_horaria;
+    strcpy(novo_no->info.nome_da_disciplina, nome_da_disciplina);
     novo_no->info.periodo = periodo;
+    novo_no->info.carga_horaria = carga_horaria;
     novo_no->esq = NULL;
     novo_no->dir = NULL;
 
@@ -67,15 +67,15 @@ ArvDisciplinas *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[
 }
 
 // Função para inserir um novo código de disciplina (tema)
-ArvDisciplinas *inserirDisciplina(ArvDisciplinas **raiz, int codigoDisciplina, char nome_da_disciplina[],  int semestreCursado, int notaFinal) {
+ArvDisciplinas *inserirDisciplina(ArvDisciplinas **raiz, int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria) {
     if (*raiz == NULL) {
-        *raiz = criaNo_Disciplina(codigoDisciplina, nome_da_disciplina, semestreCursado, notaFinal);
+        *raiz = criaNo_Disciplina(codigoDisciplina, nome_da_disciplina, periodo, carga_horaria);
         //printf("Disciplina com código '%s' cadastrado com sucesso!\n", nome_da_disciplina);
     } else {
         if (codigoDisciplina < (*raiz)->info.codigo_da_disciplina)
-            (*raiz)->esq = inserirDisciplina(&((*raiz)->esq), codigoDisciplina, nome_da_disciplina, semestreCursado, notaFinal);
+            (*raiz)->esq = inserirDisciplina(&((*raiz)->esq), codigoDisciplina, nome_da_disciplina, periodo, carga_horaria);
         else if (codigoDisciplina > (*raiz)->info.codigo_da_disciplina)
-            (*raiz)->dir = inserirDisciplina(&((*raiz)->dir), codigoDisciplina, nome_da_disciplina, semestreCursado, notaFinal);
+            (*raiz)->dir = inserirDisciplina(&((*raiz)->dir), codigoDisciplina, nome_da_disciplina, periodo, carga_horaria);
         else
             printf("Nao e possivel cadastrar o podcast com código '%d' novamente na mesma plataforma.\n", codigoDisciplina);
     }
