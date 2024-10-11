@@ -10,43 +10,41 @@ typedef struct Data {
 } Data;
 
 
-typedef struct Entrevistas {
+typedef struct Entrevista {
     char titulo_da_entrevista[100]; 
     Data data;
     float  duracao;  
     char nome_do_entrevistado[50], especialidade_do_entrevistado[20]; 
-    struct Entrevistas *esq, *dir;
-} Entrevistas;
+    struct Entrevista *esq, *dir;
+} Entrevista;
+
 
 
 void preencherData(Data *data, const char dia[], const char mes[], const char ano[]);
+Entrevista *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]);
+Entrevista *inserirEntrevistas(Entrevista **raiz, const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]);
 
+void imprimir_Entrevistas(Entrevista *raiz);
 
-Entrevistas *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]);
-Entrevistas *inserirEntrevistas(Entrevistas **raiz, const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]);
+int verificarFolha(Entrevista *no);
+Entrevista *obterUnicoFilho(Entrevista *node);
+Entrevista *encontrarMaiorDireita(Entrevista *no);
+int removerEntrevista(Entrevista **raiz, const char tituloEntrevista[]);
 
-void imprimirAsEntrevistas(Entrevistas *raiz);
-
-int verificarFolha(Entrevistas *no);
-Entrevistas *obterUnicoFilho(Entrevistas *node);
-Entrevistas *encontrarMaiorDireita(Entrevistas *no);
-int removerEntrevista(Entrevistas **raiz, const char tituloEntrevista[]);
-
-void limpa_entrevistas(Entrevistas *raiz);
+void limpaMemoria_entrevistas(Entrevista *raiz);
 
 int main() {
-   Entrevistas *raiz = NULL;
+   Entrevista *raiz = NULL;
 
     // Inserção dos elementos
     raiz = inserirEntrevistas(&raiz, "Literatura", "10", "08", "2021", 20.8, "J.K. Rowling", "Escritora");
     raiz = inserirEntrevistas(&raiz, "Historias de Vida", "15", "03", "2022", 60.0, "Nelson Mandela", "Político");
-
     raiz = inserirEntrevistas(&raiz, "Ciencia", "19", "04", "2024", 30.5, "Albert Einstein", "Físico");
     raiz = inserirEntrevistas(&raiz, "Gastronomia", "20", "05", "2023", 45.2, "Gordon Ramsay", "Chef");
 
     // Impressão dos elementos
     printf("---Entrevistas do Tema---\n\n");
-    imprimirAsEntrevistas(raiz);
+    imprimir_Entrevistas(raiz);
 
     // Remover elemento
     // Impressão dos elementos
@@ -56,10 +54,10 @@ int main() {
 
     // Impressão dos elementos
     printf("---Entrevistas do Tema---\n\n");
-    imprimirAsEntrevistas(raiz);
+    imprimir_Entrevistas(raiz);
 
     //Liberar a memoria
-    void limpa_entrevistas(Entrevistas *raiz);
+    void limpaMemoria_entrevistas(Entrevista *raiz);
 
     return 0;
 }
@@ -72,10 +70,9 @@ void preencherData(Data *data, const char dia[], const char mes[], const char an
 }
 
 
-
-Entrevistas *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]) {
+Entrevista *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]) {
     
-    Entrevistas *novo_no = (Entrevistas *)malloc(sizeof(Entrevistas)); // Aloca memória para o novo nó.
+    Entrevista *novo_no = (Entrevista *)malloc(sizeof(Entrevista)); // Aloca memória para o novo nó.
 
     if (novo_no == NULL) {
         printf("Erro na alocação de memória.\n");
@@ -96,7 +93,7 @@ Entrevistas *criaNo_Entrevistas(const char tituloEntrevista[], const char dia[],
 }
 
 
-Entrevistas *inserirEntrevistas(Entrevistas **raiz, const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]) {
+Entrevista *inserirEntrevistas(Entrevista **raiz, const char tituloEntrevista[], const char dia[], const char mes[], const char ano[], float duracao, const char nome_entrevistado[], const char especialidade_entrevistado[]) {
     if (*raiz == NULL) {
         *raiz = criaNo_Entrevistas(tituloEntrevista, dia, mes, ano, duracao, nome_entrevistado, especialidade_entrevistado);
         printf("Podcast '%s' cadastrado com sucesso!\n", tituloEntrevista);
@@ -116,11 +113,11 @@ Entrevistas *inserirEntrevistas(Entrevistas **raiz, const char tituloEntrevista[
 }
 
 
-void imprimirAsEntrevistas(Entrevistas *raiz) {
+void imprimir_Entrevistas(Entrevista *raiz) {
 
     if (raiz != NULL) {
 
-        imprimirAsEntrevistas(raiz->esq);
+        imprimir_Entrevistas(raiz->esq);
 
         printf("Título: %s\n", raiz->titulo_da_entrevista);
         printf("Data da Entrevista: %s/%s/%s\n", raiz->data.dia, raiz->data.mes, raiz->data.ano);
@@ -128,17 +125,17 @@ void imprimirAsEntrevistas(Entrevistas *raiz) {
         printf("Nome do Entrevistado: %s\n", raiz->nome_do_entrevistado);
         printf("Especialidade do Entrevistado: %s\n\n", raiz->especialidade_do_entrevistado);
 
-        imprimirAsEntrevistas(raiz->dir);
+        imprimir_Entrevistas(raiz->dir);
     }
 }
 
 
-int verificarFolha(Entrevistas *no) {
+int verificarFolha(Entrevista *no) {
     return (no->esq == NULL && no->dir == NULL);
 }
 
 
-Entrevistas *obterUnicoFilho(Entrevistas *no) {
+Entrevista *obterUnicoFilho(Entrevista *no) {
     if (no->esq != NULL && no->dir == NULL)
         return no->esq;
     else if (no->dir != NULL && no->esq == NULL)
@@ -148,7 +145,7 @@ Entrevistas *obterUnicoFilho(Entrevistas *no) {
 }
 
 
-Entrevistas *encontrarMaiorDireita(Entrevistas *no) {
+Entrevista *encontrarMaiorDireita(Entrevista *no) {
     // Se não houver um filho à direita, este nó é o maior
     if (no->dir == NULL)
         return no;
@@ -158,14 +155,14 @@ Entrevistas *encontrarMaiorDireita(Entrevistas *no) {
 }
 
 
-int removerEntrevista(Entrevistas **raiz, const char tituloEntrevista[]) {
+int removerEntrevista(Entrevista **raiz, const char tituloEntrevista[]) {
     int remove = 0;
-    Entrevistas *maior = NULL;
+    Entrevista *maior = NULL;
 
     if (*raiz != NULL) {
 
         if (strcmp((*raiz)->titulo_da_entrevista, tituloEntrevista) == 0) {
-            Entrevistas *Aux, *filho;
+            Entrevista *Aux, *filho;
 
             if (verificarFolha(*raiz)) {
                 Aux = *raiz;
@@ -195,10 +192,10 @@ int removerEntrevista(Entrevistas **raiz, const char tituloEntrevista[]) {
     return remove;
 }
 
-void limpa_entrevistas(Entrevistas *raiz) {
+void limpaMemoria_entrevistas(Entrevista *raiz) {
     if (raiz != NULL) {
-        limpa_entrevistas(raiz->esq);
-        limpa_entrevistas(raiz->dir);
+        limpaMemoria_entrevistas(raiz->esq);
+        limpaMemoria_entrevistas(raiz->dir);
         free(raiz);
     }
 }
