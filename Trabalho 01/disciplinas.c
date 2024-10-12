@@ -2,28 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Disciplinas{
+typedef struct Cursos{
     int codigo_da_disciplina, periodo, carga_horaria;
     char nome_da_disciplina[50];
-} Disciplinas;
+} Cursos;
 
-typedef struct ArvDisciplinas {
-    Disciplinas info; 
-    struct ArvDisciplinas *esq, *dir;
-} ArvDisciplinas;
+typedef struct ArvCursos {
+    Cursos info; 
+    struct ArvCursos *esq, *dir;
+} ArvCursos;
 
 // Funções
-ArvDisciplinas *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria);
-ArvDisciplinas *inserirDisciplina(ArvDisciplinas **raiz, int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria);
-void imprimir_Disciplinas(ArvDisciplinas *raiz);
-int verificarFolhaDisciplina(ArvDisciplinas *no);
-ArvDisciplinas *obterUnicoFilhoDisciplina(ArvDisciplinas *node);
-ArvDisciplinas *encontrarMaiorDireitaDisciplina(ArvDisciplinas *no);
-int removerDisciplina(ArvDisciplinas **raiz, int codigo);
-void limpar_disciplinas(ArvDisciplinas *raiz);
+ArvCursos *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria);
+ArvCursos *inserirDisciplina(ArvCursos **raiz, int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria);
+void imprimir_Cursos(ArvCursos *raiz);
+int verificarFolhaCurso(ArvCursos *no);
+ArvCursos *obterUnicoFilhoCurso(ArvCursos *node);
+ArvCursos *encontrarMaiorDireitaCurso(ArvCursos *no);
+int removerCurso(ArvCursos **raiz, int codigo);
+void limpar_cursos(ArvCursos *raiz);
 
 int main() {
-    ArvDisciplinas *raiz = NULL;
+    ArvCursos *raiz = NULL;
     // Árvore de Notas: código da disciplina, semestre cursado, nota final obtida pelo aluno. A árvore deve ser 
     // organizada pelo código da disciplina. 
     // Inserindo temas com base no código da disciplina (agora números inteiros)
@@ -33,22 +33,22 @@ int main() {
     raiz = inserirDisciplina(&raiz, 104, "Circuitos", 1, 30); // Literatura
 
     printf("---ANTES DE REMOVER UM ELEMENTO---\n\n");
-    imprimir_Disciplinas(raiz);
+    imprimir_Cursos(raiz);
 
     printf("\n\n---Removendo uma disciplina---\n\n");
-    removerDisciplina(&raiz, 102); // Removendo Ciencia
+    removerCurso(&raiz, 102); // Removendo Ciencia
 
     printf("---MOSTRANDO AS DISCIPLINAS---\n\n");
-    imprimir_Disciplinas(raiz);
+    imprimir_Cursos(raiz);
 
     // Liberando Memoria
-    limpar_disciplinas(raiz);
+    limpar_cursos(raiz);
     return 0;
 }
 
 // Função para criar um nó
-ArvDisciplinas *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria) {
-    ArvDisciplinas *novo_no = (ArvDisciplinas *)malloc(sizeof(ArvDisciplinas)); // Aloca memória para o novo nó
+ArvCursos *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria) {
+    ArvCursos *novo_no = (ArvCursos *)malloc(sizeof(ArvCursos)); // Aloca memória para o novo nó
 
     if (novo_no == NULL) {
         printf("Erro na alocação de memória.\n");
@@ -67,7 +67,7 @@ ArvDisciplinas *criaNo_Disciplina(int codigoDisciplina, char nome_da_disciplina[
 }
 
 // Função para inserir um novo código de disciplina (tema)
-ArvDisciplinas *inserirDisciplina(ArvDisciplinas **raiz, int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria) {
+ArvCursos *inserirDisciplina(ArvCursos **raiz, int codigoDisciplina, char nome_da_disciplina[], int periodo, int carga_horaria) {
     if (*raiz == NULL) {
         *raiz = criaNo_Disciplina(codigoDisciplina, nome_da_disciplina, periodo, carga_horaria);
         //printf("Disciplina com código '%s' cadastrado com sucesso!\n", nome_da_disciplina);
@@ -84,21 +84,21 @@ ArvDisciplinas *inserirDisciplina(ArvDisciplinas **raiz, int codigoDisciplina, c
 }
 
 // Função para imprimir os temas (inorder traversal)
-void imprimir_Disciplinas(ArvDisciplinas *raiz) {
+void imprimir_Cursos(ArvCursos *raiz) {
     if (raiz != NULL) {
-        imprimir_Disciplinas(raiz->esq);
+        imprimir_Cursos(raiz->esq);
         printf("Código da Disciplina: %d  Nome da Disciplina: %s Periodo: %d  Carga horaria: %d\n", raiz->info.codigo_da_disciplina, raiz->info.nome_da_disciplina, raiz->info.periodo, raiz->info.carga_horaria);        
-        imprimir_Disciplinas(raiz->dir);
+        imprimir_Cursos(raiz->dir);
     }
 }
 
 // Função para verificar se o nó é uma folha
-int verificarFolhaDisciplina(ArvDisciplinas *no) {
+int verificarFolhaCurso(ArvCursos *no) {
     return (no->esq == NULL && no->dir == NULL);
 }
 
 // Função para obter o único filho (se houver)
-ArvDisciplinas *obterUnicoFilhoDisciplina(ArvDisciplinas *no) {
+ArvCursos *obterUnicoFilhoCurso(ArvCursos *no) {
     if (no->esq != NULL && no->dir == NULL)
         return no->esq;
     else if (no->dir != NULL && no->esq == NULL)
@@ -108,41 +108,41 @@ ArvDisciplinas *obterUnicoFilhoDisciplina(ArvDisciplinas *no) {
 }
 
 // Função para encontrar o maior valor à direita
-ArvDisciplinas *encontrarMaiorDireitaDisciplina(ArvDisciplinas *no) {
+ArvCursos *encontrarMaiorDireitaCurso(ArvCursos *no) {
     if (no->dir == NULL)
         return no;
-    return encontrarMaiorDireitaDisciplina(no->dir);
+    return encontrarMaiorDireitaCurso(no->dir);
 }
 
 // Função para remover um tema (código da disciplina)
-int removerDisciplina(ArvDisciplinas **raiz, int codigoDisciplina) {
+int removerCurso(ArvCursos **raiz, int codigoDisciplina) {
     int remove = 1;
-    ArvDisciplinas *maior = NULL;
+    ArvCursos *maior = NULL;
 
     if (*raiz != NULL) {
 
         if ((*raiz)->info.codigo_da_disciplina == codigoDisciplina) {
-            ArvDisciplinas *Aux, *filho;
+            ArvCursos *Aux, *filho;
 
-            if (verificarFolhaDisciplina(*raiz)) {
+            if (verificarFolhaCurso(*raiz)) {
                 Aux = *raiz;
                 *raiz = NULL;
                 free(Aux);
-            } else if ((filho = obterUnicoFilhoDisciplina(*raiz)) != NULL) {
+            } else if ((filho = obterUnicoFilhoCurso(*raiz)) != NULL) {
                 Aux = *raiz;
                 *raiz = filho;
                 free(Aux);
             } else {
                 Aux = *raiz;
-                maior = encontrarMaiorDireitaDisciplina((*raiz)->esq);
+                maior = encontrarMaiorDireitaCurso((*raiz)->esq);
                 (*raiz)->info.codigo_da_disciplina = maior->info.codigo_da_disciplina;
-                removerDisciplina(&((*raiz)->esq), maior->info.codigo_da_disciplina);
+                removerCurso(&((*raiz)->esq), maior->info.codigo_da_disciplina);
                 free(Aux);
             }
         } else if (codigoDisciplina < (*raiz)->info.codigo_da_disciplina) {
-            remove = removerDisciplina(&((*raiz)->esq), codigoDisciplina);
+            remove = removerCurso(&((*raiz)->esq), codigoDisciplina);
         } else {
-            remove = removerDisciplina(&((*raiz)->dir), codigoDisciplina);
+            remove = removerCurso(&((*raiz)->dir), codigoDisciplina);
         }
     } else {
         remove = 0;
@@ -151,10 +151,10 @@ int removerDisciplina(ArvDisciplinas **raiz, int codigoDisciplina) {
 }
 
 // Função para liberar a memória da árvore
-void limpar_disciplinas(ArvDisciplinas *raiz) {
+void limpar_cursos(ArvCursos *raiz) {
     if (raiz != NULL) {
-        limpar_disciplinas(raiz->esq);
-        limpar_disciplinas(raiz->dir);
+        limpar_cursos(raiz->esq);
+        limpar_cursos(raiz->dir);
         free(raiz);
     }
 }
