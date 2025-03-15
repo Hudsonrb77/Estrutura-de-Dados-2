@@ -10,6 +10,7 @@ typedef struct Music {
 
 typedef struct Arv_Music {
     Music info;
+    //strutc Arv_Albuns *   arv_albuns;
     struct Arv_Music *left, *right;
 } Arv_Music;
 
