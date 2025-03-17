@@ -84,7 +84,6 @@ int main() {
 
     // Liberando memória
     liberaLibrary(&myLibrary);
-    liberaLibrary(&myLibrary);
 
     return 0;
 }

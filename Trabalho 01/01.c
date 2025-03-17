@@ -3,24 +3,6 @@
 #include <string.h>
 
 // Definindo tipos com typedef para simplificar
-typedef struct Music {
-    char title[100];
-    float duration;
-} Music;
-
-typedef struct Arv_Music {
-    Music info;
-    //strutc Arv_Albuns *   arv_albuns;
-    struct Arv_Music *left, *right;
-} Arv_Music;
-
-typedef struct Album {
-    char title[100];
-    int year;
-    int track_count;
-    Arv_Music *tracks;  // Árvore de músicas
-    struct Album *left, *right;
-} Album;
 
 typedef struct Artist {
     char name[100];
@@ -37,7 +19,7 @@ typedef struct ArvArtist {
 
 typedef struct Playlist {
     char name[100];
-    Arv_Music *tracks;  // Árvore de músicas
+    //Arv_Music *tracks;   Árvore de músicas
     struct Playlist *left, *right;
 } Playlist;
 
