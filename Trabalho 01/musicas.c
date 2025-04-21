@@ -1,106 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "musicas.h"
 
-// Definindo tipos com typedef para simplificar
-
-// Music Structure
-typedef struct Music {
-    char titleMusic[100];
-    float duration;
-}Music;
-
-typedef struct ArvMusic {
-    Music info;
-    struct ArvMusic *left, *right;
-} ArvMusic;
-
-
-typedef struct Playlist {
-    char name[100];
-    //Arv_Song *tracks;  // Árvore de músicas
-    struct Playlist *left, *right;
-} Playlist;
-
-typedef struct Library {
-    ArvMusic *musicas;    // Árvore de artistas
-    Playlist *playlists;   // Árvore de playlists
-} Library;
-
-// Protótipos das funções
-void initializeLibrary(Library **library);
-ArvMusic *criaNo_Music(char title[], float duration);
-int insertMusic
-(ArvMusic **rt, char title[], float duration);
-void printMusic(ArvMusic *rt);
-ArvMusic* buscarMusicas(ArvMusic *rt, char nameBusc[]);
-int isMusicLeaf(ArvMusic *rt);
-ArvMusic *getMusicSingleChild(ArvMusic *rt);
-ArvMusic *findMusicMaxRight(ArvMusic *rt);
-int removeMusic(ArvMusic **rt, char musicTitle[]) ;
-void liberaArvMusic(ArvMusic **rt);
-void liberaLibrary(Library **library);
-
-int main() {
-    Library *myLibrary = NULL;
-    initializeLibrary(&myLibrary);
-
-    if (myLibrary == NULL) {
-        printf("Falha ao inicializar a biblioteca.\n");
-        return 1;
-    }
-
-    printf("Library inicializada com sucesso!\n");
-
-    // Inserindo músicas reais na árvore
-    insertMusic(&(myLibrary->musicas), "Shivers", 3.27);  // Ed Sheeran
-    insertMusic(&(myLibrary->musicas), "Drivers License", 4.02);  // Olivia Rodrigo
-    insertMusic(&(myLibrary->musicas), "Blinding Lights", 3.20);  // The Weeknd
-    insertMusic(&(myLibrary->musicas), "Peaches", 3.18);  // Justin Bieber
-
-    printf("\nLista de músicas após inserção:\n");
-    printMusic(myLibrary->musicas);
-
-    // Testando busca por uma música existente
-    char searchTitle[] = "Blinding Lights";
-    ArvMusic *found = buscarMusicas(myLibrary->musicas, searchTitle);
-    if (found != NULL) {
-        printf("\nMúsica encontrada: %s, Duração: %.2f minutos\n", found->info.titleMusic, found->info.duration);
-    } else {
-        printf("\nMúsica '%s' não encontrada.\n", searchTitle);
-    }
-
-    // Testando remoção de uma música
-    char removeTitle[] = "Pesaches";
-    if (removeMusic(&(myLibrary->musicas), removeTitle)) {
-        printf("\nMúsica '%s' removida com sucesso!\n", removeTitle);
-    } else {
-        printf("\nFalha ao remover '%s', música não encontrada.\n", removeTitle);
-    }
-
-    // Imprimindo novamente após remoção
-    printf("\nLista de músicas após remoção:\n");
-    printMusic(myLibrary->musicas);
-
-    // Liberando memória
-    liberaLibrary(&myLibrary);
-
-    return 0;
-}
-
-// Função para inicializar a biblioteca
-void initializeLibrary(Library **library) {
-    *library = (Library *)malloc(sizeof(Library));
-    if (*library == NULL) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-
-    (*library)->musicas = NULL;
-    (*library)->playlists = NULL;
-}
-
-// Função para criar um nó de artista
+// Função para criar um nó de música
 ArvMusic *criaNo_Music(char title[], float duration) {
     ArvMusic *novo_no = (ArvMusic *)malloc(sizeof(ArvMusic));
     if (novo_no == NULL) {
@@ -118,7 +18,6 @@ ArvMusic *criaNo_Music(char title[], float duration) {
 
     return novo_no;
 }
-
 // Função para inserir um artista na árvore
 int insertMusic(ArvMusic **rt, char title[], float duration) {
     int inseriu = 1;
@@ -231,15 +130,5 @@ void liberaArvMusic(ArvMusic **rt) {
         liberaArvMusic(&(*rt)->right);
         free(*rt);
         *rt = NULL; // Define o ponteiro como NULL após liberar a memória
-    }
-}
-
-// Função para liberar a memória da biblioteca
-void liberaLibrary(Library **library) {
-    if (*library != NULL) {
-        liberaArvMusic(&(*library)->musicas);
-        // Adicione funções para liberar playlists e outras estruturas
-        free(*library);
-        *library = NULL; // Define o ponteiro como NULL após liberar a memória
     }
 }
