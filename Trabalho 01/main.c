@@ -3,7 +3,7 @@
 
 
 typedef struct Library {
-   ArvAlbum *album;   // Árvore de playlists
+   ArvArtist *album;   // Árvore de playlists
 } Library;
 
 // Protótipos das funções

@@ -16,17 +16,17 @@ typedef struct Album {
 } Album;
 
 
-typedef struct ArvAlbum {
+typedef struct ArvArtist {
     Album info;
-    struct ArvAlbum *left, *right;
-} ArvAlbum;
+    struct ArvArtist *left, *right;
+} ArvArtist;
 
 // Protótipos das funções
 // Função para inicializar a biblioteca
 
 // Função para criar um nó de artista
-ArvAlbum *criaNo_Album(char title[], int year, int track_count) {
-    ArvAlbum *novo_no = (ArvAlbum *)malloc(sizeof(ArvAlbum));
+ArvArtist *criaNo_Album(char title[], int year, int track_count) {
+    ArvArtist *novo_no = (ArvArtist *)malloc(sizeof(ArvArtist));
     if (novo_no == NULL) {
         printf("Memory allocation failed.\n");
         exit(1);
@@ -45,7 +45,7 @@ ArvAlbum *criaNo_Album(char title[], int year, int track_count) {
 }
 
 // Função para inserir um artista na árvore
-int insertAlbum(ArvAlbum **rt, char title[], int year, int track_count) {
+int insertAlbum(ArvArtist **rt, char title[], int year, int track_count) {
     int inseriu = 1;
     
     if (*rt == NULL) {
@@ -64,7 +64,7 @@ int insertAlbum(ArvAlbum **rt, char title[], int year, int track_count) {
 }
 
 // Função para mostrar os artistas (em-ordem)
-void printAlbums(ArvAlbum *rt) {
+void printAlbums(ArvArtist *rt) {
     if (rt != NULL) {
         printAlbums(rt->left);
         printf("Album title: %s, Year: %d, Track count: %d\n", rt->info.title, rt->info.year, rt->info.track_count);
@@ -72,8 +72,8 @@ void printAlbums(ArvAlbum *rt) {
     }
 }
 
-ArvAlbum* buscarArtistas(ArvAlbum *rt, char nameBusc[]) {
-    ArvAlbum *encontrou;
+ArvArtist* buscarArtistas(ArvArtist *rt, char nameBusc[]) {
+    ArvArtist *encontrou;
     encontrou = NULL;
 
     if (rt != NULL) {
@@ -91,12 +91,12 @@ ArvAlbum* buscarArtistas(ArvAlbum *rt, char nameBusc[]) {
 }
 
 
-int isAlbumLeaf(ArvAlbum *rt) {
+int isAlbumLeaf(ArvArtist *rt) {
     return (rt->left == NULL && rt->right == NULL);
 }
 
 
-ArvAlbum *getAlbumSingleChild(ArvAlbum *rt) {
+ArvArtist *getAlbumSingleChild(ArvArtist *rt) {
     if (rt->left != NULL && rt->right == NULL)
         return rt->left;
     else if (rt->right != NULL && rt->left == NULL)
@@ -104,7 +104,7 @@ ArvAlbum *getAlbumSingleChild(ArvAlbum *rt) {
     else
         return NULL;
 }
-ArvAlbum *findAlbumMaxRight(ArvAlbum *rt) {
+ArvArtist *findAlbumMaxRight(ArvArtist *rt) {
     // Se não houver um filho à direita, este nó é o maior
     if (rt->right == NULL)
         return rt;
@@ -114,14 +114,14 @@ ArvAlbum *findAlbumMaxRight(ArvAlbum *rt) {
 }
 
 
-int removeAlbum(ArvAlbum **rt, char albumTitle[]) {
+int removeAlbum(ArvArtist **rt, char albumTitle[]) {
     int remove = 1;
-    ArvAlbum *maior = NULL;
+    ArvArtist *maior = NULL;
 
     if (*rt != NULL) {
 
         if (strcmp((*rt)->info.title, albumTitle) == 0) {
-            ArvAlbum *Aux, *filho;
+            ArvArtist *Aux, *filho;
 
             Aux = *rt;
             if (isAlbumLeaf(*rt)) {
@@ -150,7 +150,7 @@ int removeAlbum(ArvAlbum **rt, char albumTitle[]) {
 
 
 // Função para liberar a memória da árvore de artistas
-void liberaArvAlbum(ArvAlbum **rt) {
+void liberaArvAlbum(ArvArtist **rt) {
     if (*rt != NULL) {
         liberaArvAlbum(&(*rt)->left);
         liberaArvAlbum(&(*rt)->right);
