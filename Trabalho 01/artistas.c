@@ -1,21 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-// Definindo tipos com typedef para simplificar
-
-typedef struct Artist {
-    char name[100];
-    char type[50];   // Singer, duo, band, etc.
-    char genre[50];
-    int album_count;
-    struct Artist *left, *right;
-} Artist;
-
-typedef struct ArvArtist {
-    Artist info;
-    struct ArvArtist *left, *right;
-} ArvArtist;
+#include "artistas.h"
 
 typedef struct Playlist {
     char name[100];
@@ -23,76 +6,20 @@ typedef struct Playlist {
     struct Playlist *left, *right;
 } Playlist;
 
-typedef struct Library {
-    ArvArtist *artists;    // Árvore de artistas
-    Playlist *playlists;   // Árvore de playlists
-} Library;
 
 // Protótipos das funções
-void initializeLibrary(Library **library);
-ArvArtist *criaNo_Artist(char name[], char type[], char genre[], int album_count);
-int insere(ArvArtist **rt, char name[], char type[], char genre[], int album_count);
-void mostrarArtistas(ArvArtist *rt);
-int verificarFolha(ArvArtist *rt);
-ArvArtist *obterUnicoFilho(ArvArtist *rt);
-ArvArtist *encontrarMaiorDireita(ArvArtist *rt);
-int removerArtista(ArvArtist **rt, char tituloEntrevista[]) ;
-void liberaArvArtist(ArvArtist **rt);
-void liberaLibrary(Library **library);
-
-int main() {
-    Library *myLibrary = NULL;
-    initializeLibrary(&myLibrary);
-
-    if (myLibrary->artists == NULL && myLibrary->playlists == NULL) {
-        printf("Library initialized successfully! Trees are empty.\n");
-    } else {
-        printf("Error initializing the library.\n");
-    }
-
-    // Inserindo artistas
-    insere(&myLibrary->artists, "Artist 1", "Singer", "Pop", 5);
-    insere(&myLibrary->artists, "Artist 2", "Band", "Rock", 3);
-    insere(&myLibrary->artists, "Artist 3", "Band", "Funk", 3);
-    insere(&myLibrary->artists, "Skillet", "Band", "Rock", 7);
-
-    // Mostrando artistas
-    printf("\nArtists in the library:\n");
-    mostrarArtistas(myLibrary->artists);
-
-    removerArtista(&myLibrary->artists,"Artist 3");
-    printf("\nApos remover o Artist 3\n");
-    mostrarArtistas(myLibrary->artists);
-
-    removerArtista(&myLibrary->artists,"Artist 2");
-    printf("\nApos remover o Artist 2\n");
-    mostrarArtistas(myLibrary->artists);
-
-    removerArtista(&myLibrary->artists,"Artist 1");
-    printf("\nApos remover o Artist 1\n");
-    mostrarArtistas(myLibrary->artists);
-
-    // Liberando memória
-    liberaLibrary(&myLibrary);
-
-    return 0;
-}
-
-// Função para inicializar a biblioteca
-void initializeLibrary(Library **library) {
-    *library = (Library *)malloc(sizeof(Library));
-    if (*library == NULL) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-
-    (*library)->artists = NULL;
-    (*library)->playlists = NULL;
-}
+ArvAlbum *criaNo_Artist(char name[], char type[], char genre[], int album_count);
+int insere(ArvAlbum **rt, char name[], char type[], char genre[], int album_count);
+void mostrarArtistas(ArvAlbum *rt);
+int verificarFolha(ArvAlbum *rt);
+ArvAlbum *obterUnicoFilho(ArvAlbum *rt);
+ArvAlbum *encontrarMaiorDireita(ArvAlbum *rt);
+int removerArtista(ArvAlbum **rt, char tituloEntrevista[]) ;
+void liberaArvArtist(ArvAlbum **rt);
 
 // Função para criar um nó de artista
-ArvArtist *criaNo_Artist(char name[], char type[], char genre[], int album_count) {
-    ArvArtist *novo_no = (ArvArtist *)malloc(sizeof(ArvArtist));
+ArvAlbum *criaNo_Artist(char name[], char type[], char genre[], int album_count) {
+    ArvAlbum *novo_no = (ArvAlbum *)malloc(sizeof(ArvAlbum));
     if (novo_no == NULL) {
         printf("Memory allocation failed.\n");
         exit(1);
@@ -116,7 +43,7 @@ ArvArtist *criaNo_Artist(char name[], char type[], char genre[], int album_count
 }
 
 // Função para inserir um artista na árvore
-int insere(ArvArtist **rt, char name[], char type[], char genre[], int album_count) {
+int insere(ArvAlbum **rt, char name[], char type[], char genre[], int album_count) {
     int inseriu = 1;
     
     if (*rt == NULL) {
@@ -133,7 +60,7 @@ int insere(ArvArtist **rt, char name[], char type[], char genre[], int album_cou
 }
 
 // Função para mostrar os artistas (em-ordem)
-void mostrarArtistas(ArvArtist *rt) {
+void mostrarArtistas(ArvAlbum *rt) {
     if (rt != NULL) {
         mostrarArtistas(rt->left);
         printf("Artist: %s, Type: %s, Genre: %s, Albums: %d\n",
@@ -142,8 +69,8 @@ void mostrarArtistas(ArvArtist *rt) {
     }
 }
 
-ArvArtist* buscarArtistas(ArvArtist *rt, char nameBusc[]) {
-    ArvArtist *encontrou;
+ArvAlbum* buscarArtistas(ArvAlbum *rt, char nameBusc[]) {
+    ArvAlbum *encontrou;
     encontrou = NULL;
 
     if (rt != NULL) {
@@ -161,12 +88,12 @@ ArvArtist* buscarArtistas(ArvArtist *rt, char nameBusc[]) {
 }
 
 
-int verificarFolha(ArvArtist *rt) {
+int verificarFolha(ArvAlbum *rt) {
     return (rt->left == NULL && rt->right == NULL);
 }
 
 
-ArvArtist *obterUnicoFilho(ArvArtist *rt) {
+ArvAlbum *obterUnicoFilho(ArvAlbum *rt) {
     if (rt->left != NULL && rt->right == NULL)
         return rt->left;
     else if (rt->right != NULL && rt->left == NULL)
@@ -174,7 +101,7 @@ ArvArtist *obterUnicoFilho(ArvArtist *rt) {
     else
         return NULL;
 }
-ArvArtist *encontrarMaiorDireita(ArvArtist *rt) {
+ArvAlbum *encontrarMaiorDireita(ArvAlbum *rt) {
     // Se não houver um filho à direita, este nó é o maior
     if (rt->right == NULL)
         return rt;
@@ -184,14 +111,14 @@ ArvArtist *encontrarMaiorDireita(ArvArtist *rt) {
 }
 
 
-int removerArtista(ArvArtist **rt, char tituloEntrevista[]) {
+int removerArtista(ArvAlbum **rt, char tituloEntrevista[]) {
     int remove = 1;
-    ArvArtist *maior = NULL;
+    ArvAlbum *maior = NULL;
 
     if (*rt != NULL) {
 
         if (strcmp((*rt)->info.name, tituloEntrevista) == 0) {
-            ArvArtist *Aux, *filho;
+            ArvAlbum *Aux, *filho;
 
             Aux = *rt;
             if (verificarFolha(*rt)) {
@@ -220,7 +147,7 @@ int removerArtista(ArvArtist **rt, char tituloEntrevista[]) {
 
 
 // Função para liberar a memória da árvore de artistas
-void liberaArvArtist(ArvArtist **rt) {
+void liberaArvArtist(ArvAlbum **rt) {
     if (*rt != NULL) {
         liberaArvArtist(&(*rt)->left);
         liberaArvArtist(&(*rt)->right);
@@ -229,12 +156,3 @@ void liberaArvArtist(ArvArtist **rt) {
     }
 }
 
-// Função para liberar a memória da biblioteca
-void liberaLibrary(Library **library) {
-    if (*library != NULL) {
-        liberaArvArtist(&(*library)->artists);
-        // Adicione funções para liberar playlists e outras estruturas
-        free(*library);
-        *library = NULL; // Define o ponteiro como NULL após liberar a memória
-    }
-}

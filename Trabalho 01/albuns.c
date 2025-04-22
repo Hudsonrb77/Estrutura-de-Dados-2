@@ -1,3 +1,6 @@
+#ifndef ALBUM_H
+#define ALBUM_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,80 +21,8 @@ typedef struct ArvAlbum {
     struct ArvAlbum *left, *right;
 } ArvAlbum;
 
-
-typedef struct Playlist {
-    char name[100];
-    //Arv_Song *tracks;  // Árvore de músicas
-    struct Playlist *left, *right;
-} Playlist;
-
-typedef struct Library {
-    ArvAlbum *albuns;    // Árvore de artistas
-    Playlist *playlists;   // Árvore de playlists
-} Library;
-
 // Protótipos das funções
-void initializeLibrary(Library **library);
-ArvAlbum *criaNo_Album(char title[], int year, int track_count);
-int insertAlbum
-(ArvAlbum **rt, char title[], int year, int track_count);
-void printAlbums(ArvAlbum *rt);
-
-int isAlbumLeaf(ArvAlbum *rt);
-ArvAlbum *getAlbumSingleChild(ArvAlbum *rt);
-ArvAlbum *findAlbumMaxRight(ArvAlbum *rt);
-int removeAlbum(ArvAlbum **rt, char albumTitle[]) ;
-void liberaArvAlbum(ArvAlbum **rt);
-void liberaLibrary(Library **library);
-
-int main() {
-    Library *myLibrary = NULL;
-    initializeLibrary(&myLibrary);
-
-    if (myLibrary->albuns == NULL && myLibrary->playlists == NULL) {
-        printf("Library initialized successfully! Trees are empty.\n");
-    } else {
-        printf("Error initializing the library.\n");
-    }
-
-    insertAlbum(&myLibrary->albuns, "Divide", 2017, 12);
-    insertAlbum(&myLibrary->albuns, "Folklore", 2020, 16);
-    insertAlbum(&myLibrary->albuns, "Evermore", 2020, 15);
-    insertAlbum(&myLibrary->albuns, "Future Nostalgia", 2020, 11);
-
-    printf("\nÁlbuns na biblioteca:\n");
-    printAlbums(myLibrary->albuns);
-
-    // Removendo um álbum
-    int test;
-    printf("\nRemovendo 'Evermore'...\n");
-    test = removeAlbum(&myLibrary->albuns, "Evermore");
-    printf("A remocao: %d\n", test);
-
-    
-    printf("\nÁlbuns após remoção:\n");
-
-    test = removeAlbum(&myLibrary->albuns, "Evermore");
-    printf("A remocao: %d\n", test);
-    printAlbums(myLibrary->albuns);
-
-    // Liberando memória
-    liberaLibrary(&myLibrary);
-
-    return 0;
-}
-
 // Função para inicializar a biblioteca
-void initializeLibrary(Library **library) {
-    *library = (Library *)malloc(sizeof(Library));
-    if (*library == NULL) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-
-    (*library)->albuns = NULL;
-    (*library)->playlists = NULL;
-}
 
 // Função para criar um nó de artista
 ArvAlbum *criaNo_Album(char title[], int year, int track_count) {
@@ -228,12 +159,4 @@ void liberaArvAlbum(ArvAlbum **rt) {
     }
 }
 
-// Função para liberar a memória da biblioteca
-void liberaLibrary(Library **library) {
-    if (*library != NULL) {
-        liberaArvAlbum(&(*library)->albuns);
-        // Adicione funções para liberar playlists e outras estruturas
-        free(*library);
-        *library = NULL; // Define o ponteiro como NULL após liberar a memória
-    }
-}
+#endif

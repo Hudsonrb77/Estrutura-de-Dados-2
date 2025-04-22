@@ -1,62 +1,49 @@
 #include <stdio.h>
-#include "musicas.h"  // Inclui o cabeçalho com todas as declarações
-
-
-// Definindo tipos com typedef para simplificar
-
+#include "albuns.h"  // Inclui o cabeçalho com todas as declarações
 
 
 typedef struct Library {
-   ArvMusic *musicas;   // Árvore de playlists
+   ArvAlbum *album;   // Árvore de playlists
 } Library;
 
 // Protótipos das funções
 void initializeLibrary(Library **library);
 void liberaLibrary(Library **library);
 
+
 int main() {
-    // 1. Inicializa a biblioteca
-    Library *minhaBiblioteca = NULL;
-    initializeLibrary(&minhaBiblioteca);
-    
-    printf("Biblioteca inicializada!\n");
+    Library *myLibrary = NULL;
+    initializeLibrary(&myLibrary);
 
-    // 2. Insere músicas
-    insertMusic(&(minhaBiblioteca->musicas), "Bohemian Rhapsody", 5.55);
-    insertMusic(&(minhaBiblioteca->musicas), "Imagine", 3.04);
-    insertMusic(&(minhaBiblioteca->musicas), "Shape of You", 3.53);
-
-    // 3. Lista todas as músicas (em ordem alfabética)
-    printf("\n=== Músicas na Biblioteca ===\n");
-    printMusic(minhaBiblioteca->musicas);
-
-    // 4. Busca uma música específica
-    char musicaProcurada[] = "Imagine";
-    ArvMusic *musicaEncontrada = buscarMusicas(minhaBiblioteca->musicas, musicaProcurada);
-    
-    if (musicaEncontrada != NULL) {
-        printf("\nMúsica encontrada: %s (Duração: %.2f minutos)\n", 
-               musicaEncontrada->info.titleMusic, 
-               musicaEncontrada->info.duration);
+    if (myLibrary->album == NULL) {
+        printf("Library initialized successfully! Trees are empty.\n");
     } else {
-        printf("\nMúsica '%s' não encontrada.\n", musicaProcurada);
+        printf("Error initializing the library.\n");
     }
 
-    // 5. Remove uma música
-    char musicaRemover[] = "Shape of You";
-    if (removeMusic(&(minhaBiblioteca->musicas), musicaRemover)) {
-        printf("\nMúsica '%s' removida com sucesso!\n", musicaRemover);
-    } else {
-        printf("\nFalha ao remover '%s'.\n", musicaRemover);
-    }
+    insertAlbum(&myLibrary->album, "Divide", 2017, 12);
+    insertAlbum(&myLibrary->album, "Folklore", 2020, 16);
+    insertAlbum(&myLibrary->album, "Evermore", 2020, 15);
+    insertAlbum(&myLibrary->album, "Future Nostalgia", 2020, 11);
 
-    // 6. Lista novamente após remoção
-    printf("\n=== Músicas após remoção ===\n");
-    printMusic(minhaBiblioteca->musicas);
+    printf("\nÁlbuns na biblioteca:\n");
+    printAlbums(myLibrary->album);
 
-    // 7. Libera a memória alocada
-    liberaLibrary(&minhaBiblioteca);
-    printf("\nMemória liberada. Fim do programa.\n");
+    // Removendo um álbum
+    int test;
+    printf("\nRemovendo 'Evermore'...\n");
+    test = removeAlbum(&myLibrary->album, "Evermore");
+    printf("A remocao: %d\n", test);
+
+    
+    printf("\nÁlbuns após remoção:\n");
+
+    test = removeAlbum(&myLibrary->album, "Evermore");
+    printf("A remocao: %d\n", test);
+    printAlbums(myLibrary->album);
+
+    // Liberando memória
+    liberaLibrary(&myLibrary);
 
     return 0;
 }
@@ -68,13 +55,13 @@ void initializeLibrary(Library **library) {
        exit(1);
    }
 
-   (*library)->musicas = NULL;
+   (*library)->album = NULL;
 }
 
 // Função para liberar a memória da biblioteca
 void liberaLibrary(Library **library) {
    if (*library != NULL) {
-       liberaArvMusic(&(*library)->musicas);
+       liberaArvAlbum(&(*library)->album);
        // Adicione funções para liberar playlists e outras estruturas
        free(*library);
        *library = NULL; // Define o ponteiro como NULL após liberar a memória
